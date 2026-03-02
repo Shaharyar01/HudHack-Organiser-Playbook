@@ -1,5 +1,7 @@
 #  HUDHACK 2026: The Official Archive & Playbook
 
+https://hudhack.com/
+
 Welcome to the official open-source archive of **HudHack 2026**, the inaugural hackathon organised by the **University of Huddersfield Cyber Security Society**. 
 
 This repository serves two purposes:
