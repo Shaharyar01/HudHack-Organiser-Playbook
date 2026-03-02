@@ -6,7 +6,14 @@ Everything you will need to make a website and the sign up process ( its harder 
 
 ## 🖥️ Part 1: The Websites
 
-We used simple, single-page static HTML sites hosted on **GitHub Pages** (which is free and reliable). You do not need a heavy React app for a hackathon. The website went through two distinct phases:
+We used simple, single-page static HTML sites hosted on **GitHub Pages** (which is free and reliable). You do not need a heavy React app for a hackathon. 
+
+### 🌍 Hosting & Custom Domain (`hudhack.com`)
+To make the event look professional, we didn't just use the default GitHub URL. We bought a custom domain from **GoDaddy**.
+* **How we set it up:** We linked our GitHub Pages repository to GoDaddy by updating the DNS settings on GoDaddy's dashboard (pointing the A records to GitHub's IP addresses and adding a CNAME record) and entering the custom domain into our repository's settings on GitHub.
+* 🚨 **Domain Ownership for 2027:** I own the `hudhack.com` domain for the next year. If the next committee wants to keep using it for 2027, **you must contact me personally** so I can update the DNS records or transfer the domain over to you!
+
+The website went through two distinct phases:
 
 1. **`/Sign-up-Website` (Pre-Event):** * **Purpose:** To build hype, display the schedule, explain the theme, and drive traffic to our Google Form sign-up link. 
    * **Features:** A live countdown timer and interactive schedule.
