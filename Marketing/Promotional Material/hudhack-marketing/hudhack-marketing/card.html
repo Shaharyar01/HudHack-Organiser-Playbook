@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUDHACK 2026 | Discord QR Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #41c2d5;
+            --purple: #c084fc;
+            --dark: #0f172a;
+            --mid: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            gap: 32px;
+        }
+
+        .hint {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        /* ── CARD GRID: 2 per row on screen ── */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 760px;
+            width: 100%;
+        }
+
+        /* ── SINGLE CARD ── */
+        .card {
+            background: var(--dark);
+            border: 4px solid var(--dark);
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3/4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px 24px 22px;
+        }
+
+        /* Teal accent bar top */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--teal), var(--purple));
+        }
+
+        /* Subtle watermark */
+        .card::after {
+            content: 'HUDHACK';
+            position: absolute;
+            bottom: -18px;
+            right: -12px;
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.03);
+            letter-spacing: -4px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        /* Top: logo area */
+        .card-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            z-index: 1;
+        }
+
+        .card-badge {
+            background: var(--purple);
+            color: var(--dark);
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 3px 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 2px solid var(--purple);
+        }
+
+        .card-title {
+            font-size: 1.9rem;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 0.9;
+            text-align: center;
+            text-shadow: 4px 4px 0 var(--teal);
+        }
+
+        /* Middle: QR code */
+        .qr-block {
+            background: white;
+            border: 5px solid white;
+            box-shadow: 0 0 0 3px var(--teal);
+            padding: 8px;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        .qr-block img {
+            display: block;
+            width: 160px;
+            height: 160px;
+            image-rendering: pixelated;
+        }
+
+        /* Bottom: link + cta */
+        .card-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .discord-url {
+            background: var(--teal);
+            color: var(--dark);
+            font-size: 0.78rem;
+            font-weight: 900;
+            padding: 6px 18px;
+            border: 2px solid var(--teal);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            text-align: center;
+        }
+
+        .card-cta {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+        }
+
+        /* ── PRINT STYLES ── */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                display: block;
+            }
+
+            .hint, .print-btn { display: none !important; }
+
+            /* A4: print 4 cards, 2x2 */
+            .card-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+                max-width: 100%;
+                width: 100%;
+                height: 100vh;
+                page-break-inside: avoid;
+            }
+
+            .card {
+                border: 2px dashed #ccc;
+                aspect-ratio: unset;
+                height: 50vh;
+            }
+
+            .card::before { height: 5px; }
+        }
+
+        /* ── PRINT BUTTON ── */
+        .print-btn {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            background: var(--dark);
+            color: var(--teal);
+            border: 3px solid var(--dark);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 10px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 5px 5px 0 var(--teal);
+            z-index: 100;
+            transition: box-shadow 0.15s;
+        }
+        .print-btn:hover { box-shadow: 5px 5px 0 var(--purple); }
+    </style>
+</head>
+<body>
+
+<p class="hint">🖨 Print this page — 4 cards per A4 sheet · cut along dashed lines</p>
+
+<div class="card-grid">
+
+    <!-- Card 1 -->
+    <div class="card">
+        <div class="card-top">
+            <div class="card-badge">University of Huddersfield Cyber Security Society</div>
+            <div class="card-title">HUD<br>HACK<br>2026</div>
+        </div>
+        <div class="qr-block">
+            <img src="qr.png" alt="Discord QR Code — discord.gg/MpJk8bGSRV">
+        </div>
+        <div class="card-bottom">
+            <span class="discord-url">discord.gg/MpJk8bGSRV</span>
+            <div class="card-cta">Scan to join our Discord → get updates all day</div>
+        </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+        <div class="card-top">
+            <div class="card-badge">University of Huddersfield Cyber Security Society</div>
+            <div class="card-title">HUD<br>HACK<br>2026</div>
+        </div>
+        <div class="qr-block">
+            <img src="qr.png" alt="Discord QR Code — discord.gg/MpJk8bGSRV">
+        </div>
+        <div class="card-bottom">
+            <span class="discord-url">discord.gg/MpJk8bGSRV</span>
+            <div class="card-cta">Scan to join our Discord → get updates all day</div>
+        </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+        <div class="card-top">
+            <div class="card-badge">University of Huddersfield Cyber Security Society</div>
+            <div class="card-title">HUD<br>HACK<br>2026</div>
+        </div>
+        <div class="qr-block">
+            <img src="qr.png" alt="Discord QR Code — discord.gg/MpJk8bGSRV">
+        </div>
+        <div class="card-bottom">
+            <span class="discord-url">discord.gg/MpJk8bGSRV</span>
+            <div class="card-cta">Scan to join our Discord → get updates all day</div>
+        </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+        <div class="card-top">
+            <div class="card-badge">University of Huddersfield Cyber Security Society</div>
+            <div class="card-title">HUD<br>HACK<br>2026</div>
+        </div>
+        <div class="qr-block">
+            <img src="qr.png" alt="Discord QR Code — discord.gg/MpJk8bGSRV">
+        </div>
+        <div class="card-bottom">
+            <span class="discord-url">discord.gg/MpJk8bGSRV</span>
+            <div class="card-cta">Scan to join our Discord → get updates all day</div>
+        </div>
+    </div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+
+</body>
+</html>
