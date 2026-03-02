@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HUDHACK 2026 | That's A Wrap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  
+  <link rel="icon" type="image/png" href="Logo1.png" />
+
+  <meta property="og:title" content="HUDHACK 2026 | Wrapped">
+  <meta property="og:description" content="The inaugural University of Huddersfield Hackathon is complete. Check out the stats and projects!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hudhack.com">
+  <meta property="og:image" content="Logo1.png">
+  <meta name="theme-color" content="#ffffff">
+
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* =========================================
+       1. VARIABLES
+       ========================================= */
+    :root {
+        --bg-color: #ffffff;
+        --border-main: #0f172a;
+        --hud-teal: #0891b2;
+        --hud-purple: #7c3aed;
+        --hud-gold: #eab308;
+        --hud-silver: #94a3b8;
+        --hud-bronze: #b45309;
+        --hud-pink: #ec4899;
+        --text-main: #0f172a;
+        --card-bg: #f8fafc;
+        --base-font: 1.1rem; 
+        --placeholder-bg: #e2e8f0;
+        --max-w: 1600px; 
+    }
+
+    /* =========================================
+       2. BASE STYLES
+       ========================================= */
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    
+    * { 
+      box-sizing: border-box; 
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease; 
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    ::selection { background: var(--hud-teal); color: var(--bg-color); }
+
+    body {
+      margin: 0;
+      font-family: 'JetBrains Mono', monospace;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.5;
+      font-size: var(--base-font);
+      background-image: 
+          linear-gradient(rgba(15, 23, 42, 0.05) 2px, transparent 2px),
+          linear-gradient(90deg, rgba(15, 23, 42, 0.05) 2px, transparent 2px);
+      background-size: 80px 80px;
+    }
+
+    /* =========================================
+       3. UI COMPONENTS & ANIMATIONS
+       ========================================= */
+    
+    /* Reveal Animation Classes */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Marquee */
+    .marquee-container {
+      background: var(--bg-color); 
+      color: var(--hud-teal); 
+      padding: 0.8rem 0; overflow: hidden; white-space: nowrap;
+      position: fixed; top: 0; width: 100%; z-index: 999; 
+      font-weight: 800; font-size: 1rem; letter-spacing: 2px;
+      border-bottom: 4px solid var(--border-main);
+    }
+    .marquee-content { display: inline-block; white-space: nowrap; animation: marquee 40s linear infinite; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 10000;
+    }
+
+    /* Buttons */
+    .cta-container { display: flex; gap: 2rem; width: 100%; max-width: 700px; margin-top: 3rem; justify-content: center; }
+    .btn-brutal { 
+      padding: 1.2rem 3rem; background: var(--hud-teal); color: #ffffff; 
+      text-decoration: none; text-transform: uppercase; font-weight: 900; font-size: 1.2rem; 
+      border: 4px solid var(--border-main); box-shadow: 8px 8px 0 var(--border-main);
+      text-align: center;
+    }
+    .btn-brutal:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--border-main) !important; }
+    .btn-brutal:active { transform: translate(0, 0); box-shadow: 0 0 0 !important; }
+    .btn-secondary { background: var(--bg-color); color: var(--text-main); box-shadow: 8px 8px 0 var(--hud-purple); }
+    .btn-secondary:hover { box-shadow: 12px 12px 0 var(--hud-purple) !important; }
+
+    /* Back To Top */
+    #backToTop { 
+      position: fixed; bottom: 30px; left: 30px; background: var(--border-main); color: var(--bg-color); 
+      border: 4px solid var(--hud-teal); padding: 10px 20px; font-weight: 900; 
+      cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; 
+      box-shadow: 6px 6px 0 var(--hud-teal);
+    }
+    #backToTop.visible { opacity: 1; pointer-events: all; }
+
+    /* =========================================
+       4. HERO SECTION & QUICK STATS
+       ========================================= */
+    header {
+      min-height: 100vh; 
+      display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+      padding: 6rem 2rem 2rem; position: relative;
+    }
+    
+    .hero-content {
+      flex: 1;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+
+    .system-status { 
+      background: var(--bg-color); border: 4px solid var(--border-main); padding: 10px 30px; 
+      font-weight: 800; font-size: 1.2rem; box-shadow: 8px 8px 0 var(--hud-teal); 
+      margin-bottom: 30px; text-transform: uppercase; color: var(--text-main); 
+    }
+    
+    h1 { 
+      font-size: clamp(4rem, 12vw, 10rem); margin: 0; line-height: 0.85; font-weight: 900; 
+      text-transform: uppercase; letter-spacing: -6px; color: var(--text-main); 
+      text-shadow: 12px 12px 0px var(--hud-teal);
+    }
+    .hero-sub {
+      font-size: clamp(2rem, 5vw, 4rem); color: transparent; -webkit-text-stroke: 2px var(--border-main); 
+      margin-bottom: -1vw; text-shadow: none; letter-spacing: -2px; font-weight: 900; text-transform: uppercase;
+    }
+    .hero-year {
+      font-size: clamp(3rem, 8vw, 6rem); text-shadow: 8px 8px 0px var(--hud-purple); 
+      color: var(--bg-color); -webkit-text-stroke: 3px var(--border-main); line-height: 0.9; margin-top: 10px; font-weight: 900;
+    }
+
+    /* Front & Center Stats */
+    .hero-stats-bar {
+      width: 96%; max-width: var(--max-w);
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; justify-content: center;
+      margin-top: 4rem;
+    }
+    .hero-stat-box { 
+      border: 4px solid var(--border-main); padding: 25px; background: var(--bg-color); 
+      text-align: center; box-shadow: 8px 8px 0 var(--border-main);
+    }
+    .hero-stat-box:nth-child(1) { box-shadow: 8px 8px 0 var(--hud-teal); }
+    .hero-stat-box:nth-child(2) { box-shadow: 8px 8px 0 var(--hud-purple); }
+    .hero-stat-box .num { font-size: 5rem; font-weight: 900; line-height: 1; color: var(--text-main); }
+    .hero-stat-box:nth-child(1) .num { color: var(--hud-teal); }
+    .hero-stat-box:nth-child(2) .num { color: var(--hud-purple); }
+    .hero-stat-box .label { font-size: 1.4rem; font-weight: 800; text-transform: uppercase; margin-top: 10px; }
+
+    /* =========================================
+       5. CONTENT MODULES & PANELS
+       ========================================= */
+    .modules-container { 
+      width: 96%; padding: 2rem 0 4rem; 
+      display: flex; flex-direction: column; gap: 4rem; max-width: var(--max-w); margin: 0 auto;
+    }
+
+    .panel { 
+      background: var(--card-bg); border: 4px solid var(--border-main); 
+      padding: 50px; box-shadow: 16px 16px 0 var(--border-main);
+      position: relative; text-align: center;
+    }
+    .panel-teal { box-shadow: 16px 16px 0 var(--hud-teal); }
+    .panel-purple { box-shadow: 16px 16px 0 var(--hud-purple); }
+
+    .panel-title {
+        font-size: 3rem; text-transform: uppercase; 
+        background: var(--border-main); color: white; 
+        display: inline-block; padding: 10px 30px; 
+        margin: 0 auto 40px auto; box-shadow: 8px 8px 0 var(--hud-teal);
+        font-weight: 900; line-height: 1; letter-spacing: -2px;
+    }
+
+    /* ─── GROUP PHOTO PLACEHOLDER ─── */
+    .group-photo-wrap {
+        width: 100%;
+        aspect-ratio: 21/9; 
+        background: var(--placeholder-bg);
+        border: 4px dashed var(--border-main);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        margin: 0 auto 40px auto;
+        position: relative;
+        overflow: hidden;
+    }
+    .group-photo-wrap img {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;
+        z-index: 2; 
+    }
+    .photo-placeholder-text {
+        font-size: clamp(1.5rem, 4vw, 3rem); font-weight: 900; color: var(--text-main); 
+        opacity: 0.5; text-align: center; z-index: 1; padding: 20px; text-transform: uppercase;
+    }
+
+    /* ─── YEAR GRID ─── */
+    .year-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; justify-content: center; }
+    .year-box { border: 4px solid var(--border-main); padding: 30px 15px; background: var(--bg-color); text-align: center; }
+    .year-box:nth-child(1) { box-shadow: 8px 8px 0 var(--hud-teal); }
+    .year-box:nth-child(2) { box-shadow: 8px 8px 0 var(--hud-purple); }
+    .year-box:nth-child(3) { box-shadow: 8px 8px 0 var(--hud-gold); }
+    .year-box:nth-child(4) { box-shadow: 8px 8px 0 var(--border-main); }
+    .year-box .pct { font-size: 4rem; font-weight: 900; line-height: 1; }
+    .year-box:nth-child(1) .pct { color: var(--hud-teal); }
+    .year-box:nth-child(2) .pct { color: var(--hud-purple); }
+    .year-box:nth-child(3) .pct { color: var(--hud-gold); }
+    .year-box .yr { font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-top: 15px; }
+
+    /* ─── PARTNER GRID ─── */
+    .partner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 20px auto 0; justify-content: center; }
+    .partner-box {
+        border: 4px solid var(--border-main); padding: 40px; background: var(--bg-color);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; min-height: 220px;
+    }
+    .partner-box:nth-child(odd)  { box-shadow: 10px 10px 0 var(--hud-teal); }
+    .partner-box:nth-child(even) { box-shadow: 10px 10px 0 var(--hud-purple); }
+    /* Added hover scale to make them feel clickable */
+    .partner-box:hover { transform: translateY(-4px); }
+    .partner-box img { max-width: 80%; max-height: 100px; object-fit: contain; }
+    .partner-box div { font-weight: 900; text-transform: uppercase; font-size: 1.3rem; text-align: center; color: var(--text-main);}
+
+    /* ─── LEAD ORGANISERS GRID ─── */
+    .organizer-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 40px; justify-content: center;
+    }
+    .organizer-card {
+        border: 4px solid var(--border-main); padding: 40px 30px; background: var(--bg-color);
+        display: flex; flex-direction: row; align-items: center; text-align: left; /* Restored left alignment */
+    }
+    .organizer-card:nth-child(1) { box-shadow: 12px 12px 0 var(--hud-teal); }
+    .organizer-card:nth-child(2) { box-shadow: 12px 12px 0 var(--hud-purple); }
+    
+    .org-photo-wrap {
+        width: 200px; height: 200px; flex-shrink: 0; margin-right: 35px; /* Restored big left image */
+        background: var(--placeholder-bg); border: 4px dashed var(--border-main);
+        display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+    }
+    .org-photo-wrap img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; }
+    .photo-placeholder-text.large { font-size: 2.5rem; opacity: 0.5; z-index: 1; }
+    
+    .org-info { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; flex: 1; } /* Restored left text */
+    .org-name { font-size: 2.2rem; font-weight: 900; text-transform: uppercase; line-height: 1.1; margin-bottom: 5px; color: var(--text-main); }
+    .org-role { font-size: 1.1rem; font-weight: 800; color: var(--hud-purple); text-transform: uppercase; margin-bottom: 15px; }
+    
+    .org-links { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: flex-start;} /* Restored left links */
+    .org-link-btn {
+        background: var(--bg-color); color: var(--border-main); border: 3px solid var(--border-main);
+        padding: 6px 15px; font-weight: 900; font-size: 0.9rem; text-decoration: none; text-transform: uppercase;
+        box-shadow: 4px 4px 0 var(--hud-teal); transition: 0.2s;
+    }
+    .organizer-card:nth-child(2) .org-link-btn { box-shadow: 4px 4px 0 var(--hud-gold); }
+    .org-link-btn:hover {
+        background: var(--hud-teal); color: var(--bg-color) !important;
+        transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--border-main) !important;
+    }
+    .organizer-card:nth-child(2) .org-link-btn:hover { background: var(--hud-gold) !important; color: var(--border-main) !important; }
+
+    .org-job-plea {
+        font-size: 1.1rem; font-weight: 900; color: var(--bg-color); 
+        background: var(--hud-pink); padding: 8px 15px; text-transform: uppercase;
+        border: 3px solid var(--border-main); box-shadow: 5px 5px 0 var(--border-main);
+        display: inline-block;
+    }
+    .organizer-card:nth-child(2) .org-job-plea { background: var(--hud-teal); }
+
+    /* ─── VOLUNTEERS ─── */
+    .volunteer-list {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px;
+    }
+    .volunteer-link {
+        font-weight: 800; font-size: 1rem; color: var(--text-main); text-decoration: none;
+        background: var(--bg-color); border: 3px solid var(--border-main); padding: 10px 20px;
+        text-transform: uppercase; box-shadow: 4px 4px 0 var(--hud-teal); transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, color 0.2s;
+    }
+    .volunteer-link:hover {
+        transform: translate(-3px, -3px); box-shadow: 7px 7px 0 var(--hud-teal) !important;
+        background: var(--hud-teal); color: white;
+    }
+    .volunteer-link:nth-child(even) { box-shadow: 4px 4px 0 var(--hud-purple); }
+    .volunteer-link:nth-child(even):hover { box-shadow: 7px 7px 0 var(--hud-purple) !important; background: var(--hud-purple); }
+    .volunteer-link:nth-child(3n) { box-shadow: 4px 4px 0 var(--hud-gold); }
+    .volunteer-link:nth-child(3n):hover { box-shadow: 7px 7px 0 var(--hud-gold) !important; background: var(--hud-gold); color: var(--border-main); }
+
+    /* ─── FOOTER ─── */
+    footer { padding: 6rem 2rem; text-align: center; border-top: 6px solid var(--border-main); background: var(--bg-color); margin-top: 4rem; }
+    .footer-socials { display: flex; justify-content: center; gap: 2rem; margin-bottom: 3rem; flex-wrap: wrap; }
+    .footer-link { 
+      color: var(--bg-color); text-decoration: none; font-size: 1.2rem; font-weight: 900; 
+      padding: 1rem 2rem; border: 4px solid var(--border-main); box-shadow: 8px 8px 0 var(--border-main);
+      display: flex; align-items: center; gap: 10px; background: var(--hud-teal); transition: 0.2s;
+    }
+    .footer-link:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--border-main) !important; }
+    .footer-link svg { width: 24px; height: 24px; fill: currentColor; }
+
+    /* =========================================
+       6. MOBILE OPTIMIZATION
+       ========================================= */
+    @media (max-width: 900px) {
+      .cta-container { flex-direction: column; align-items: center; gap: 1rem; }
+      .btn-brutal { width: 100%; }
+      .panel { padding: 30px 20px; }
+      header { padding-top: 8rem; }
+      .group-photo-wrap { aspect-ratio: 16/9; } 
+      
+      .organizer-card { flex-direction: column; text-align: center; }
+      .org-photo-wrap { margin-right: 0; margin-bottom: 25px; width: 180px; height: 180px; }
+      .org-info { align-items: center; }
+      .org-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="marquee-container">
+    <div class="marquee-content">
+      THAT'S A WRAP &nbsp;///&nbsp; HUDHACK 2026 &nbsp;///&nbsp; BREAK THE LOOP &nbsp;///&nbsp; SEE YOU NEXT YEAR &nbsp;///&nbsp; THAT'S A WRAP &nbsp;///&nbsp; HUDHACK 2026 &nbsp;///&nbsp; BREAK THE LOOP &nbsp;///&nbsp; SEE YOU NEXT YEAR &nbsp;///&nbsp; 
+      THAT'S A WRAP &nbsp;///&nbsp; HUDHACK 2026 &nbsp;///&nbsp; BREAK THE LOOP &nbsp;///&nbsp; SEE YOU NEXT YEAR &nbsp;///&nbsp; THAT'S A WRAP &nbsp;///&nbsp; HUDHACK 2026 &nbsp;///&nbsp; BREAK THE LOOP &nbsp;///&nbsp; SEE YOU NEXT YEAR &nbsp;///&nbsp; 
+    </div>
+  </div>
+
+  <header>
+    <div class="hero-content">
+        <div class="system-status">:: STATUS: HACKATHON CONCLUDED ::</div>
+        
+        <div class="hero-sub">THAT'S A WRAP —</div>
+        <h1>HUDHACK</h1>
+        <div class="hero-year">2026</div>
+        
+        <div class="cta-container">
+          <a href="https://hudhack2026.devpost.com/project-gallery" target="_blank" class="btn-brutal">View Projects</a>
+          <a href="https://discord.gg/MpJk8bGSRV" target="_blank" class="btn-brutal btn-secondary">Join Discord</a>
+        </div>
+    </div>
+
+    <div class="hero-stats-bar reveal">
+        <div class="hero-stat-box">
+            <div class="num">61</div>
+            <div class="label">Attendees</div>
+        </div>
+        <div class="hero-stat-box">
+            <div class="num">10+</div>
+            <div class="label">Projects Built</div>
+        </div>
+        <div class="hero-stat-box" style="box-shadow: 8px 8px 0 var(--hud-gold);">
+            <div class="num" style="color: var(--hud-gold);">£600+</div>
+            <div class="label">In Prizes</div>
+        </div>
+        <div class="hero-stat-box" style="box-shadow: 8px 8px 0 var(--border-main);">
+            <div class="num">1</div>
+            <div class="label">Epic Event</div>
+        </div>
+    </div>
+  </header>
+
+  <div class="modules-container" id="main-content">
+
+    <div class="panel panel-teal reveal">
+        <h2 class="panel-title">ATTENDEE OVERVIEW</h2>
+        
+        <div class="group-photo-wrap">
+            <img src="GroupPic8.jpg" alt="HUDHACK 2026 Group Photo" onerror="this.style.display='none'">
+            <div class="photo-placeholder-text">📸<br>REPLACE WITH<br>GROUP PHOTO</div>
+        </div>
+
+        <div class="year-grid">
+            <div class="year-box">
+                <div class="pct">30%</div>
+                <div class="yr">1st Year<br><span style="opacity:0.6; font-size:0.9rem;">18 students</span></div>
+            </div>
+            <div class="year-box">
+                <div class="pct">59%</div>
+                <div class="yr">2nd Year<br><span style="opacity:0.6; font-size:0.9rem;">36 students</span></div>
+            </div>
+            <div class="year-box">
+                <div class="pct">10%</div>
+                <div class="yr">Final Year<br><span style="opacity:0.6; font-size:0.9rem;">6 students</span></div>
+            </div>
+            <div class="year-box">
+                <div class="pct">2%</div>
+                <div class="yr">Postgrad<br><span style="opacity:0.6; font-size:0.9rem;">1 student</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel reveal">
+      <h2 class="panel-title" style="box-shadow: 8px 8px 0 var(--hud-purple);">THEME: BREAK THE LOOP</h2>
+      <p style="font-weight: 800; font-size: 1.4rem; max-width: 1000px; margin: 0 auto; color: var(--text-main); line-height: 1.6;">
+        This year, we challenged hackers to identify everyday frustrations—university-specific or general daily issues—and use technology to design practical solutions. You all delivered incredible results.
+      </p>
+    </div>
+
+    <div class="panel reveal">
+      <h2 class="panel-title">OUR PARTNERS</h2>
+      <p style="font-weight: 800; font-size: 1.3rem; max-width: 1000px; margin: 0 auto 30px auto; color: var(--text-main);">
+        Massive thanks to the partners who made HudHack 2026 a reality. We couldn't have built this without you.
+      </p>
+      
+      <div class="partner-grid">
+        <a href="https://hackathons.org.uk/" target="_blank" rel="noopener noreferrer" class="partner-box" style="text-decoration: none; color: inherit;">
+            <img src="Pink.png" alt="Hackathons UK">
+            <div>Hackathons UK</div>
+        </a>
+        <a href="https://www.hud.ac.uk/" target="_blank" rel="noopener noreferrer" class="partner-box" style="text-decoration: none; color: inherit;">
+            <img src="university-of-Huddersfield-logo.png" alt="University of Huddersfield">
+            <div>University of Huddersfield</div>
+        </a>
+        <a href="https://www.eatonsmith.co.uk/" target="_blank" rel="noopener noreferrer" class="partner-box" style="background-color: var(--border-main); text-decoration: none; color: inherit;">
+            <img src="es-neg.png" alt="Eaton Smith">
+            <div style="color: #ffffff;">Eaton Smith</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="panel panel-purple reveal">
+      <h2 class="panel-title" style="box-shadow: 8px 8px 0 var(--hud-gold);">ORGANISERS</h2>
+
+      <div class="organizer-grid">
+        
+        <div class="organizer-card">
+          <div class="org-photo-wrap">
+            <img src="MS.jpg" alt="Your Name" onerror="this.style.display='none'">
+            <div class="photo-placeholder-text large">📸</div>
+          </div>
+          <div class="org-info">
+            <div class="org-name">Muhammad Shaharyar</div>
+            <div class="org-role">Lead Organiser</div>
+            <div class="org-links">
+                <a href="https://github.com/Shaharyar01" target="_blank" class="org-link-btn">GitHub</a>
+                <a href="https://www.linkedin.com/in/mshaharyar01/" target="_blank" class="org-link-btn">LinkedIn</a>
+            </div>
+            <div class="org-job-plea">PLEASE GIVE ME A JOB 🙏</div>
+          </div>
+        </div>
+
+        <div class="organizer-card">  
+          <div class="org-photo-wrap">
+            <img src="Ibrahim.jpg" alt="Friend's Name" onerror="this.style.display='none'">
+            <div class="photo-placeholder-text large">📸</div>
+          </div>
+          <div class="org-info">
+            <div class="org-name">Ibrahim Gaber</div>
+            <div class="org-role">Lead Organiser</div>
+            <div class="org-links">
+                <a href="https://github.com/EgyIbrahim" target="_blank" class="org-link-btn">GitHub</a>
+                <a href="https://www.linkedin.com/in/ibrahim-gaber-b1ab1b201/" target="_blank" class="org-link-btn">LinkedIn</a>
+            </div>
+            <div class="org-job-plea">PLEASE GIVE ME A JOB 🙏</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="font-size: 1.5rem; font-weight: 900; margin: 60px auto 10px auto; text-transform: uppercase; color: var(--text-main);">Volunteer Crew</div>
+      <div class="volunteer-list">
+        <a href="https://www.linkedin.com/in/angelinavoza/" target="_blank" class="volunteer-link">Angelina</a>
+        <a href="https://www.linkedin.com/in/hassan-ahmed-493714282/?skipRedirect=true" target="_blank" class="volunteer-link">Hassan</a>
+        <a href="https://www.linkedin.com/in/rohilali/" target="_blank" class="volunteer-link">Rohail</a>
+        <a href="#" target="_blank" class="volunteer-link">Arnav</a>
+        <a href="#" target="_blank" class="volunteer-link">Grace</a>
+        <a href="https://uk.linkedin.com/in/faiz-muhammed" target="_blank" class="volunteer-link">Faiz</a>
+        <a href="#" target="_blank" class="volunteer-link">Olu</a>
+        <a href="https://www.linkedin.com/in/khalifaibrahim/" target="_blank" class="volunteer-link">Ibrahim K.</a>
+        <a href="#" target="_blank" class="volunteer-link">Laiba</a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer class="reveal">
+    <h2 style="font-size: 4rem; text-transform: uppercase; font-weight: 900; margin-bottom: 40px; color: var(--text-main);">STAY IN THE LOOP</h2>
+    
+    <div class="footer-socials">
+      <a href="https://discord.gg/MpJk8bGSRV" class="footer-link" style="background: var(--hud-purple); color: white;">
+        <svg viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        DISCORD
+      </a>
+      <a href="mailto:hudcybersoc@gmail.com" class="footer-link">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        EMAIL
+      </a>
+      <a href="https://www.instagram.com/hudcybersoc/" class="footer-link">
+        <svg viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0-3-3z"/></svg>
+        INSTAGRAM
+      </a>
+      <a href="https://www.linkedin.com/company/huddscybersoc/" class="footer-link">
+        <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+        LINKEDIN
+      </a>
+      <a href="https://www.tiktok.com/@hudcybersoc?_r=1&_t=ZN-93JRhnTTT2U" class="footer-link">
+        <svg viewBox="0 0 24 24"><path d="M21 7.5c-1.8 0-3.5-.6-4.9-1.7V15c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6c.4 0 .8 0 1.2.1v3.1c-.4-.1-.8-.2-1.2-.2-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9 3-1.3 3-2.9V3h3c.3 2.1 2.1 3.7 4.2 3.7v.8z"/></svg>
+        TIKTOK
+      </a>
+    </div>
+    
+    <p style="font-weight: 900; font-size: 1.2rem; opacity: 0.8; margin-bottom: 5px;">© 2026 UNIVERSITY OF HUDDERSFIELD CYBER SECURITY SOCIETY</p>
+    <p style="font-weight: 700; font-size: 1rem; opacity: 0.5; margin-top: 0;">WEBSITE CREATED BY Muhammad Shaharyar </p>
+  </footer>
+
+  <button id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">↑ TOP</button>
+
+  <script>
+    /* BACK TO TOP */
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('backToTop');
+      if (window.scrollY > 300) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    });
+
+    /* CONFETTI EFFECT (Runs on load) */
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animFrame;
+    let confettiRunning = false;
+    const COLORS = ['#0891b2', '#7c3aed', '#eab308', '#34d399', '#ec4899'];
+
+    function resizeCanvas() { 
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight; 
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function spawnParticle() {
+        return {
+            x: Math.random() * canvas.width, 
+            y: -20 - Math.random() * 50,
+            size: Math.random() * 12 + 6,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            speedY: Math.random() * 3 + 2, 
+            speedX: (Math.random() - 0.5) * 4,
+            rotation: Math.random() * 360, 
+            rotSpeed: (Math.random() - 0.5) * 8,
+            shape: Math.random() > 0.5 ? 'rect' : 'circle'
+        };
+    }
+
+    function drawParticle(p) {
+        ctx.save(); 
+        ctx.translate(p.x, p.y); 
+        ctx.rotate(p.rotation * Math.PI / 180); 
+        ctx.fillStyle = p.color;
+        if (p.shape === 'rect') { 
+            ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2); 
+        } else { 
+            ctx.beginPath(); 
+            ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2); 
+            ctx.fill(); 
+        }
+        ctx.restore();
+    }
+
+    function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (particles.length < 250 && confettiRunning) {
+            particles.push(spawnParticle());
+        }
+        particles = particles.filter(p => p.y < canvas.height + 20);
+        particles.forEach(p => { 
+            p.y += p.speedY; 
+            p.x += p.speedX; 
+            p.rotation += p.rotSpeed; 
+            drawParticle(p); 
+        });
+        if (particles.length > 0) {
+            animFrame = requestAnimationFrame(animateConfetti);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    function startConfetti() {
+        confettiRunning = true; 
+        particles = [];
+        animateConfetti(); 
+        setTimeout(() => { confettiRunning = false; }, 4000);
+    }
+
+    /* SCROLL REVEAL ANIMATION ENGINE */
+    const revealOptions = {
+        threshold: 0.15,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('active'); 
+            observer.unobserve(entry.target); 
+        });
+    }, revealOptions);
+
+    window.onload = () => {
+        setTimeout(startConfetti, 500);
+
+        const reveals = document.querySelectorAll('.reveal');
+        reveals.forEach(el => revealOnScroll.observe(el));
+    };
+
+  </script>
+</body>
+</html>
