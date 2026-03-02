@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUDHACK 2026 | Opening Ceremony</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --border-main: #0f172a;
+            --hud-teal: #41c2d5;
+            --hud-purple: #c084fc;
+            --text-main: #0f172a;
+            --card-bg: #ffffff;
+            --base-font: 2.2rem; 
+            --heading-font: 8rem;
+            --border-thick: 8px;
+            --dot-color: #cbd5e1;
+            --placeholder-bg: #f1f5f9;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --border-main: #ffffff;
+            --text-main: #f8fafc;
+            --card-bg: #1e293b;
+            --dot-color: #334155;
+            --placeholder-bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+
+        body {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            font-size: var(--base-font);
+            line-height: 1.4;
+        }
+
+        .presentation-container { width: 100vw; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 2% 6%; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+            background-image: radial-gradient(var(--dot-color) 2px, transparent 2px);
+            background-size: 60px 60px;
+        }
+
+        .slide.active { opacity: 1; visibility: visible; z-index: 10; }
+
+        .header-box { 
+            position: relative; 
+            margin-bottom: 3vh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: auto;
+            min-height: 180px; 
+        }
+
+        .bg-outline-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11rem;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(15, 23, 42, 0.08);
+            z-index: -1;
+            text-transform: uppercase;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        body.dark-mode .bg-outline-text { -webkit-text-stroke: 2px rgba(255, 255, 255, 0.05); }
+
+        h1 { 
+            font-size: var(--heading-font); 
+            text-transform: uppercase; 
+            margin: 0; 
+            letter-spacing: -6px; 
+            line-height: 1; 
+            font-weight: 800; 
+            text-align: center;
+            color: var(--text-main);
+            text-shadow: 10px 10px 0px var(--hud-teal);
+            position: relative;
+            z-index: 1;
+        }
+
+        .team-grid-massive {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px; 
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1650px; 
+        }
+        .team-card {
+            background: var(--card-bg); border: 5px solid var(--border-main);
+            display: flex; flex-direction: column; overflow: hidden;
+            transition: transform 0.2s ease; position: relative; aspect-ratio: 1 / 1;
+        }
+        .team-card:nth-child(odd) { box-shadow: 8px 8px 0 var(--hud-teal); }
+        .team-card:nth-child(even) { box-shadow: 8px 8px 0 var(--hud-purple); }
+        .team-card:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--border-main); }
+        .photo-wrap { width: 100%; flex-grow: 1; border-bottom: 5px solid var(--border-main); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .shy-box { font-weight: 900; font-size: 1.6rem; color: var(--text-main); text-transform: uppercase; background-color: var(--placeholder-bg); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1;}
+        .name-tag { padding: 8px 12px; background: var(--card-bg); display: flex; flex-direction: column; align-items: center; }
+        .name-v3 { font-weight: 900; font-size: 1.2rem; color: var(--text-main); text-transform: uppercase; margin: 0; }
+        .role-v3 { font-size: 0.75rem; font-weight: 800; background: var(--border-main); color: var(--bg-color); padding: 4px 8px; text-transform: uppercase; margin-top: 4px; }
+
+        .theme-toggle { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: var(--border-main); color: var(--bg-color); padding: 6px 12px; border: 3px solid var(--border-main); font-weight: 800; font-size: 0.9rem; cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0 var(--hud-teal); }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 12px; background: #f1f5f9; z-index: 100; }
+        body.dark-mode .progress-container { background: #1e293b; }
+        #progress-bar { height: 100%; background: var(--hud-teal); width: 0%; transition: width 0.3s ease; }
+
+        .schedule-list { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 1100px; margin: 0 auto; }
+        .schedule-row { display: flex; align-items: center; background: var(--card-bg); border: 5px solid var(--border-main); padding: 12px 25px; }
+        .schedule-row:nth-child(odd) { box-shadow: 8px 8px 0 var(--hud-teal); }
+        .schedule-row:nth-child(even) { box-shadow: 8px 8px 0 var(--hud-purple); }
+        .sched-time { font-weight: 900; font-size: 1.8rem; min-width: 120px; border-right: 5px solid var(--border-main); margin-right: 25px; color: var(--text-main); }
+        .sched-event { font-weight: 700; font-size: 1.5rem; text-transform: uppercase; color: var(--text-main); }
+
+        .notice-box { margin: 3vh auto 0 auto; max-width: 1100px; background: var(--card-bg); border: 4px solid var(--border-main); border-left: 12px solid var(--hud-purple); padding: 15px 30px; font-weight: 700; font-size: 1.3rem; color: var(--text-main); box-shadow: 8px 8px 0 var(--hud-purple); }
+
+        .talks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1300px; margin: 0 auto; }
+        .talk-card { background: var(--card-bg); border: 8px solid var(--border-main); padding: 40px; display: flex; flex-direction: column; position: relative; }
+        .talk-card:nth-child(odd) { box-shadow: 15px 15px 0 var(--hud-teal); }
+        .talk-card:nth-child(even) { box-shadow: 15px 15px 0 var(--hud-purple); }
+        .talk-time { background: var(--border-main); color: var(--bg-color); padding: 5px 15px; font-weight: 900; font-size: 1.6rem; display: inline-block; margin-bottom: 25px; align-self: flex-start; }
+        .talk-title { font-weight: 900; font-size: 2.5rem; color: var(--text-main); text-transform: uppercase; line-height: 1.1; margin-bottom: 15px; }
+        .talk-speaker { font-weight: 800; font-size: 1.5rem; color: var(--hud-purple); margin-bottom: 20px; }
+        .talk-desc { font-weight: 700; font-size: 1.3rem; color: var(--text-main); opacity: 0.8; }
+
+        .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1400px; margin: 0 auto; }
+        .faq-box { background: var(--card-bg); border: 6px solid var(--border-main); padding: 30px; position: relative; }
+        .faq-box:nth-child(odd) { box-shadow: 12px 12px 0 var(--hud-teal); }
+        .faq-box:nth-child(even) { box-shadow: 12px 12px 0 var(--hud-purple); }
+        .faq-q { font-weight: 900; font-size: 1.8rem; color: var(--text-main); margin-bottom: 15px; text-transform: uppercase; border-bottom: 4px solid var(--dot-color); padding-bottom: 10px; line-height: 1.1; }
+        .faq-a { font-weight: 700; font-size: 1.3rem; color: var(--text-main); opacity: 0.85; line-height: 1.3; margin: 0; }
+
+        .criteria-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; height: 48vh; }
+        .criteria-box { background: var(--card-bg); border: 6px solid var(--border-main); padding: 25px; display: flex; flex-direction: column; position: relative; }
+        .criteria-box:nth-child(odd) { box-shadow: 10px 10px 0 var(--hud-teal); }
+        .criteria-box:nth-child(even) { box-shadow: 10px 10px 0 var(--hud-purple); }
+        .crit-title { font-weight: 900; font-size: 1.6rem; color: var(--text-main); border-bottom: 4px solid var(--dot-color); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; }
+        .crit-desc { font-weight: 700; font-size: 1.1rem; color: var(--text-main); opacity: 0.8; line-height: 1.2; }
+        .crit-scale { margin-top: auto; font-weight: 800; font-size: 1rem; background: var(--border-main); color: var(--bg-color); padding: 5px 10px; text-align: center; }
+        .judging-footer { margin-top: 3vh; background: var(--border-main); color: var(--bg-color); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border: 6px solid var(--border-main); box-shadow: 12px 12px 0 var(--hud-purple); }
+        .footer-stat { font-weight: 900; font-size: 1.4rem; text-transform: uppercase; color: var(--bg-color); }
+        .footer-stat span { color: var(--hud-teal); }
+
+        .monolith { 
+            background: var(--card-bg); border: 8px solid var(--border-main); padding: 40px; 
+            box-shadow: 20px 20px 0 var(--hud-purple); position: relative; 
+            max-width: 1200px; margin: 0 auto;
+        }
+        .monolith-tag { background: var(--hud-teal); color: #0f172a; padding: 5px 20px; font-weight: 800; position: absolute; top: -25px; left: 40px; border: 4px solid var(--border-main); }
+        .category-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 30px; }
+        .cat-block { background: var(--border-main); color: var(--bg-color); padding: 10px; text-align: center; font-weight: 800; font-size: 1rem; text-transform: uppercase; border: 4px solid var(--border-main); }
+        .cat-block:nth-child(even) { background: var(--card-bg); color: var(--text-main); }
+
+        .prize-layout-v2 { display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px; height: 60vh; }
+        .prize-hero-box { grid-row: span 2; background: var(--card-bg); border: 8px solid var(--border-main); padding: 40px; box-shadow: 20px 20px 0 var(--hud-teal); display: flex; flex-direction: column; justify-content: space-between; }
+        .p-entry { display: flex; align-items: center; gap: 25px; margin-bottom: 20px; border-bottom: 4px solid var(--dot-color); padding-bottom: 20px; }
+        .p-medal { width: 85px; height: 85px; background: var(--border-main); color: var(--bg-color); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 2.8rem; border: 4px solid var(--border-main); flex-shrink: 0; }
+        .p-title { font-weight: 900; font-size: 2.2rem; color: var(--text-main); text-transform: uppercase; }
+        .prize-white-box { background: var(--card-bg); border: 8px solid var(--border-main); padding: 35px; box-shadow: 15px 15px 0 var(--hud-purple); display: flex; flex-direction: column; justify-content: center; }
+
+        .discord-monolith { display: flex; gap: 60px; align-items: center; padding: 60px; background: var(--card-bg); border: 10px solid var(--border-main); box-shadow: 30px 30px 0 var(--hud-teal); max-width: 1200px; margin: 0 auto; }
+        .action-item { font-weight: 800; font-size: 2.2rem; margin-bottom: 20px; padding-left: 50px; position: relative; text-transform: uppercase; line-height: 1.1; list-style: none; color: var(--text-main); }
+        .action-item::before { content: ">>"; position: absolute; left: 0; color: var(--hud-teal); font-weight: 900; }
+        .marquee-bg { position: absolute; top: 0; width: 100%; opacity: 0.05; font-size: 8rem; font-weight: 800; transform: rotate(-3deg); pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="theme-toggle" id="theme-btn">THEME: LIGHT</div>
+    <div class="progress-container"><div id="progress-bar"></div></div>
+    
+    <div class="presentation-container">
+
+        <!-- SLIDE 1: WELCOME (with attendance QR) -->
+        <div class="slide active" style="justify-content: center; align-items: center; background: var(--bg-color); padding: 0; overflow: hidden;">
+            <div class="marquee-bg">
+                <marquee scrollamount="20">BREAK THE LOOP // HUDHACK // </marquee>
+                <marquee scrollamount="15" direction="right" style="color: var(--hud-teal);">CYBER SECURITY SOCIETY // </marquee>
+            </div>
+            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 30px;">
+                <div style="background: var(--hud-purple); border: 6px solid var(--border-main); padding: 10px 30px; font-weight: 800; font-size: 1.8rem; box-shadow: 10px 10px 0 var(--border-main); text-transform: uppercase; color: #0f172a;">
+                    University of Huddersfield Cyber Security Society
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <h1 style="font-size: 7rem; color: transparent; -webkit-text-stroke: 4px var(--border-main); margin-bottom: -20px; position: relative; z-index: 2; text-shadow: none;">WELCOME TO</h1>
+                    <h1 style="font-size: 16rem; text-shadow: 15px 15px 0px var(--hud-teal); position: relative; z-index: 1;">HUDHACK</h1>
+                </div>
+                <!-- Attendance QR Banner -->
+                <div style="display: flex; align-items: center; gap: 35px; background: var(--card-bg); border: 8px solid var(--border-main); padding: 25px 45px; box-shadow: 15px 15px 0 var(--hud-teal);">
+                    <img src="attendance-qr.png" alt="Attendance QR Code" style="width: 190px; height: 190px; object-fit: contain; border: 5px solid var(--border-main); box-shadow: 8px 8px 0 var(--hud-purple);">
+                    <div>
+                        <div style="font-weight: 900; font-size: 1rem; text-transform: uppercase; background: var(--hud-teal); color: #0f172a; padding: 4px 14px; border: 3px solid var(--border-main); display: inline-block; margin-bottom: 10px;">ACTION REQUIRED</div>
+                        <div style="font-weight: 900; font-size: 2.8rem; text-transform: uppercase; color: var(--text-main); letter-spacing: -2px; line-height: 1;">MARK YOUR</div>
+                        <div style="font-weight: 900; font-size: 3.5rem; text-transform: uppercase; color: var(--hud-teal); text-shadow: 5px 5px 0 var(--border-main); letter-spacing: -2px; line-height: 1;">ATTENDANCE</div>
+                        <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-main); opacity: 0.65; text-transform: uppercase; margin-top: 8px;">Scan the QR code now!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: MEET THE TEAM -->
+        <div class="slide">
+            <div class="header-box">
+                <div class="bg-outline-text">ORGANISERS</div>
+                <h1>MEET THE TEAM</h1>
+            </div>
+            <div class="team-grid-massive">
+                <div class="team-card"><div class="photo-wrap"><img src="ibrahim.jpg"></div><div class="name-tag"><p class="name-v3">Ibrahim</p><span class="role-v3">Lead Organiser</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Muhammad.jpeg"></div><div class="name-tag"><p class="name-v3">Muhammad</p><span class="role-v3">Lead Organiser</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Angelina1.jpg"></div><div class="name-tag"><p class="name-v3">Angelina</p><span class="role-v3">CTF Designer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="HA.jpg"></div><div class="name-tag"><p class="name-v3">Hasan</p><span class="role-v3">Marketing</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Rohail.jpg"></div><div class="name-tag"><p class="name-v3">Rohail</p><span class="role-v3">CTF Designer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Arnav.jpg"></div><div class="name-tag"><p class="name-v3">Arnav</p><span class="role-v3">Quizzler</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Grace.jpg"></div><div class="name-tag"><p class="name-v3">Grace</p><span class="role-v3">Marketing</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Faiz.jpg"></div><div class="name-tag"><p class="name-v3">Faiz Muhammed</p><span class="role-v3">Marketing</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><div class="shy-box">CAMERA<br>SHY</div></div><div class="name-tag"><p class="name-v3">Ibrahim Khalifa</p><span class="role-v3">CTF Designer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><div class="shy-box">CAMERA<br>SHY</div></div><div class="name-tag"><p class="name-v3">Laiba</p><span class="role-v3">Marketing + CTF Designer</span></div></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: HOUSE KEEPING -->
+        <div class="slide" style="justify-content: center; align-items: center;">
+            <div class="header-box">
+                <div class="bg-outline-text">INFO</div>
+                <h1>HOUSE KEEPING</h1>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: WHAT IS A HACKATHON -->
+        <div class="slide" style="text-align: center; align-items: center; justify-content: center;">
+            <div class="header-box" style="flex-direction: column; height: auto;">
+                <div class="bg-outline-text">MISSION</div>
+                <h1 style="font-size: 9rem; color: transparent; -webkit-text-stroke: 4px var(--border-main); line-height: 1; text-shadow: none;">WHAT IS A</h1>
+                <h1 style="font-size: 12rem; text-shadow: 12px 12px 0px var(--hud-teal); line-height: 1; margin-top: 10px;">HACKATHON?</h1>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: MORNING SESSION -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">AM SESSION</div><h1>MORNING SESSION</h1></div>
+            <div class="schedule-list">
+                <div class="schedule-row"><div class="sched-time">09:30</div><div class="sched-event">Registration (HA4/04)</div></div>
+                <div class="schedule-row"><div class="sched-time">10:00</div><div class="sched-event">Opening Ceremony</div></div>
+                <div class="schedule-row"><div class="sched-time">10:30</div><div class="sched-event">Team-Building Session (By Hackathons UK)</div></div>
+                <div class="schedule-row" style="background: var(--hud-teal);"><div class="sched-time" style="color: #0f172a; border-color: #0f172a;">11:00</div><div class="sched-event" style="color: #0f172a;">🚀 HACKING BEGINS</div></div>
+                <div class="schedule-row"><div class="sched-time">12:00</div><div class="sched-event">Guest Talk: Sam Crich (Tech Lawyer)</div></div>
+                <div class="schedule-row"><div class="sched-time">12:20</div><div class="sched-event">Lunch Break</div></div>
+                <div class="schedule-row"><div class="sched-time">13:00</div><div class="sched-event">Keep Hacking</div></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: AFTERNOON SESSION -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">PM SESSION</div><h1>AFTERNOON SESSION</h1></div>
+            <div class="schedule-list">
+                <div class="schedule-row"><div class="sched-time">14:00</div><div class="sched-event">Workshop: Data Protection by Design (HA1/19)</div></div>
+                <div class="schedule-row"><div class="sched-time">14:45</div><div class="sched-event">Hacking Continues</div></div>
+                <div class="schedule-row"><div class="sched-time">16:15</div><div class="sched-event">⚡ Final Sprint</div></div>
+                <div class="schedule-row"><div class="sched-time">16:45</div><div class="sched-event">Judging & Kahoot Quiz</div></div>
+                <div class="schedule-row" style="background: var(--border-main);"><div class="sched-time" style="color: var(--bg-color); border-color: var(--bg-color);">17:30</div><div class="sched-event" style="color: var(--bg-color);">Closing Ceremony & Prize Giving</div></div>
+                <div class="schedule-row"><div class="sched-time">17:45</div><div class="sched-event">Food and Networking</div></div>
+                <div class="schedule-row"><div class="sched-time">19:00</div><div class="sched-event">Hackathon Ends</div></div>
+            </div>
+            <div class="notice-box">
+                <span style="font-weight: 900; text-transform: uppercase;">Note:</span> Food will be served after the closing ceremony. We aim to finish before iftar.
+            </div>
+        </div>
+
+        <!-- SLIDE 7: HACKATHONS UK -->
+        <div class="slide" style="justify-content: center; align-items: center;">
+            <div style="width: 100%; height: 80vh; display: flex; justify-content: center; align-items: center;">
+                 <img src="Pink.png" alt="Hackathons UK Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+            </div>
+        </div>
+
+        <!-- SLIDE 8: TALKS & WORKSHOPS -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">LEARN</div><h1>TALKS & WORKSHOPS</h1></div>
+            <div class="talks-grid">
+                <div class="talk-card">
+                    <div class="talk-time">12:00 PM</div>
+                    <div class="talk-title">Guest Talk</div>
+                    <div class="talk-speaker">By Sam Crich - Tech Lawyer</div>
+                    <div class="talk-desc">A Q&A style session with Sam — bring your questions! Get real industry insights on tech law, careers, and navigating the world of tech.</div>
+                </div>
+                <div class="talk-card">
+                    <div class="talk-time">14:00 PM</div>
+                    <div class="talk-title">Data Protection by Design</div>
+                    <div class="talk-speaker">Interactive Session (HA1/19)</div>
+                    <div class="talk-desc">A deep dive into securing your applications and understanding modern data privacy standards.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: THE THEME -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">CHALLENGE</div><h1>THE THEME</h1></div>
+            <div class="monolith">
+                <div class="monolith-tag">OFFICIAL PROMPT</div>
+                <div style="font-size: 5.5rem; font-weight: 900; line-height: 0.9; margin-bottom: 25px; text-transform: uppercase; letter-spacing: -4px; color: var(--text-main);">BREAK THE LOOP</div>
+                <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;">
+                    <div style="font-size: 1.6rem; font-weight: 700; line-height: 1.4; border-left: 10px solid var(--hud-teal); padding-left: 25px; color: var(--text-main);">
+                        The "Break The Loop" challenge focuses on identifying any everyday frustrations or problems you've been having—whether they are university-specific or general issues encountered in daily life. Use technology to design practical solutions that improve real aspects of life.
+                    </div>
+                    <div style="font-size: 1.4rem; font-weight: 800; line-height: 1.4; background: var(--placeholder-bg); border: 4px solid var(--border-main); padding: 15px 25px; color: var(--text-main); box-shadow: 6px 6px 0 var(--hud-purple);">
+                        How many times have you encountered a problem and hoped for someone else to find an effective solution? <span style="color: var(--hud-purple);">This is an invitation to fix what bugs you every day.</span>
+                    </div>
+                </div>
+                <div class="category-grid">
+                    <div class="cat-block">Accessibility</div><div class="cat-block">Sustainability</div><div class="cat-block">Wellbeing</div><div class="cat-block">Safety</div><div class="cat-block">Support</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: JUDGING CRITERIA -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">CRITERIA</div><h1>JUDGING CRITERIA</h1></div>
+            <div class="criteria-grid">
+                <div class="criteria-box"><div class="crit-title">Theme</div><div class="crit-desc">Solution relevance to theme.</div><div class="crit-scale">SCORE: 1–5</div></div>
+                <div class="criteria-box"><div class="crit-title">Innovation</div><div class="crit-desc">Originality and creative nature.</div><div class="crit-scale">SCORE: 1–5</div></div>
+                <div class="criteria-box"><div class="crit-title">Technical</div><div class="crit-desc">Engineering quality of build.</div><div class="crit-scale">SCORE: 1–5</div></div>
+                <div class="criteria-box"><div class="crit-title">Function</div><div class="crit-desc">Does it actually work? Demo completeness.</div><div class="crit-scale">SCORE: 1–5</div></div>
+                <div class="criteria-box"><div class="crit-title">Impact</div><div class="crit-desc">Real-world potential and utility.</div><div class="crit-scale">SCORE: 1–5</div></div>
+                <div class="criteria-box"><div class="crit-title">Presentation</div><div class="crit-desc">Clarity of demonstration.</div><div class="crit-scale">SCORE: 1–5</div></div>
+            </div>
+            <div class="judging-footer">
+                <div class="footer-stat" style="color: var(--bg-color)">MAX SCORE: <span>30 POINTS</span></div>
+                <div style="font-weight: 700; opacity: 0.8; color: var(--bg-color); font-size: 1.1rem;">Tie-breaker: "Which project would you most want to see continued?"</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: CTF -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">HACKING</div><h1>CAPTURE THE FLAG</h1></div>
+            <div class="monolith" style="box-shadow: 20px 20px 0 var(--hud-teal);">
+                <div class="monolith-tag" style="background: var(--hud-purple); color: #0f172a;">SIDE QUEST</div>
+                <div style="display: flex; gap: 40px; align-items: center;">
+                    <div style="flex: 1.2;">
+                        <div style="font-size: 4.5rem; font-weight: 900; line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -3px; color: var(--text-main);">FIND THE FLAG</div>
+                        <div style="font-size: 1.6rem; font-weight: 700; line-height: 1.4; border-left: 10px solid var(--hud-purple); padding-left: 25px; color: var(--text-main); margin-bottom: 25px;">
+                            CTFs are security puzzles. Your goal is to find hidden text strings by exploiting vulnerabilities, decoding messages, or analyzing files.
+                        </div>
+                        <div style="background: var(--border-main); color: var(--hud-teal); font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 900; padding: 15px 30px; display: inline-block; border: 4px solid var(--border-main); box-shadow: 10px 10px 0 var(--hud-purple);">
+                            flag{th1s_1s_4_fl4g}
+                        </div>
+                    </div>
+                    <div style="flex: 1; background: var(--placeholder-bg); border: 6px solid var(--border-main); padding: 30px; box-shadow: 15px 15px 0 var(--border-main);">
+                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 15px; border-bottom: 4px solid var(--border-main); padding-bottom: 10px;">THE HACKER MINDSET</div>
+                        <ul style="font-size: 1.4rem; font-weight: 700; line-height: 1.5; color: var(--text-main); padding-left: 25px; margin: 0;">
+                            <li style="margin-bottom: 12px;"><strong>Question Everything:</strong> Don't accept things at face value.</li>
+                            <li style="margin-bottom: 12px;"><strong>Look for Patterns:</strong> Spot what others miss.</li>
+                            <li style="margin-bottom: 12px;"><strong>Research Relentlessly:</strong> Google is your best tool.</li>
+                            <li><strong>Ethical Hacking Only:</strong> Respect boundaries.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="category-grid" style="margin-top: 40px; grid-template-columns: repeat(6, 1fr);">
+                    <div class="cat-block" style="border-color: var(--hud-purple);">Web</div>
+                    <div class="cat-block" style="border-color: var(--hud-purple);">Crypto</div>
+                    <div class="cat-block" style="border-color: var(--hud-purple);">Forensics</div>
+                    <div class="cat-block" style="border-color: var(--hud-purple);">Reverse</div>
+                    <div class="cat-block" style="border-color: var(--hud-purple);">OSINT</div>
+                    <div class="cat-block" style="border-color: var(--hud-purple);">Misc</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: PRIZES -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">WINNERS</div><h1>THE PRIZES</h1></div>
+            <div class="prize-layout-v2">
+                <div class="prize-hero-box">
+                    <div class="p-entry"><div class="p-medal">01</div><div><span class="p-title">First Place</span><br><span style="color:var(--text-main); font-weight: 700; font-size: 1.8rem;">Raspberry Pi 4 Starter Kit</span></div></div>
+                    <div class="p-entry"><div class="p-medal" style="box-shadow: 6px 6px 0 var(--hud-purple);">02</div><div><span class="p-title">Second Place</span><br><span style="color:var(--text-main); font-weight: 700; font-size: 1.8rem;">UGREEN Uno 65W USB-C Charger + Power Bank</span></div></div>
+                    <div class="p-entry" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;"><div class="p-medal" style="box-shadow: 6px 6px 0 var(--border-main);">03</div><div><span class="p-title">Third Place</span><br><span style="color:var(--text-main); font-weight: 700; font-size: 1.8rem;">Microbit kit</span></div></div>
+                </div>
+                <div class="prize-white-box"><div style="display:flex; align-items:center; gap:20px;"><div class="p-medal" style="box-shadow: 6px 6px 0 var(--hud-purple); flex-shrink:0;">01</div><div><span style="font-weight:900; color:var(--hud-purple); font-size: 2.2rem;">CTF COMPETITION</span><br><span style="color:var(--text-main); font-weight: 700; font-size: 1.8rem; margin-top: 5px; display: inline-block;">Lockpicking + Microbit kit</span></div></div></div>
+                <div class="prize-white-box" style="box-shadow: 15px 15px 0 var(--border-main);"><span style="font-weight:900; color:var(--text-main); font-size: 2.2rem;">REWARDS</span><br><span style="color:var(--text-main); font-weight: 700; font-size: 1.8rem; margin-top: 5px; display: inline-block;">🎁 Gift Cards for Mini Games Winners</span></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: FAQ -->
+        <div class="slide">
+            <div class="header-box"><div class="bg-outline-text">FAQ</div><h1>ANY QUESTIONS?</h1></div>
+            <div class="faq-grid">
+                <div class="faq-box">
+                    <div class="faq-q">Can I use AI?</div>
+                    <p class="faq-a">Yes! AI tools are welcome and encouraged. Use them to boost your productivity — just make sure you understand what you're building and can explain it during judging.</p>
+                </div>
+                <div class="faq-box">
+                    <div class="faq-q">Do I need coding experience?</div>
+                    <p class="faq-a">Not at all! No-code tools, drag-and-drop builders, and AI assistants make it possible to build great projects without writing a single line of code.</p>
+                </div>
+                <div class="faq-box">
+                    <div class="faq-q">How many members on the team?</div>
+                    <p class="faq-a">Teams can have up to 4 members. Solo participation is also welcome — you can join a team during our team-building session at the start of the event!</p>
+                </div>
+                <div class="faq-box">
+                    <div class="faq-q">Any other questions?</div>
+                    <p class="faq-a">Come speak to one of the organisers — we're here to help! You can also ask in the Discord server for quick answers before and during the event.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: FINAL (Discord + Attendance QR) -->
+        <div class="slide" style="text-align: center; align-items: center;">
+            <div class="header-box">
+                <div class="bg-outline-text">JOIN US</div>
+                <h1 style="font-size: 11rem; text-shadow: 15px 15px 0 var(--hud-teal);">STAY TUNED</h1>
+            </div>
+            <div class="discord-monolith">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://discord.gg/MpJk8bGSRV" alt="Discord QR" style="border: 10px solid var(--border-main); width: 320px; box-shadow: 15px 15px 0 var(--hud-purple);">
+                <div style="text-align: left;">
+                    <h1 style="font-size: 7rem; line-height: 0.8; color: var(--hud-teal); text-shadow: 8px 8px 0px var(--border-main); margin-bottom: 20px;">HAVE FUN!</h1>
+                    <ul style="padding:0; margin:0;"><li class="action-item">Join Discord <span>Now</span></li><li class="action-item">Access <span>Hackathon Guide</span></li><li class="action-item"><span>Announcements</span> &amp; Q&amp;A</li></ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress-bar');
+        const themeBtn = document.getElementById('theme-btn');
+        let currentSlide = 0;
+        function updateSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            progressBar.style.width = ((index + 1) / slides.length) * 100 + '%';
+            currentSlide = index;
+        }
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            themeBtn.innerText = document.body.classList.contains('dark-mode') ? "THEME: DARK" : "THEME: LIGHT";
+        });
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') currentSlide < slides.length - 1 && updateSlide(currentSlide + 1);
+            if (e.key === 'ArrowLeft') currentSlide > 0 && updateSlide(currentSlide - 1);
+            if (e.key.toLowerCase() === 'f') { if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); } else { document.exitFullscreen(); } }
+        });
+        updateSlide(0);
+    </script>
+</body>
+</html>

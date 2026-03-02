@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUDHACK 2026 | Closing Ceremony</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --border-main: #0f172a;
+            --hud-teal: #41c2d5;
+            --hud-purple: #c084fc;
+            --hud-gold: #f59e0b;
+            --hud-silver: #94a3b8;
+            --hud-bronze: #cd7c2f;
+            --text-main: #0f172a;
+            --card-bg: #ffffff;
+            --base-font: 2.2rem;
+            --heading-font: 8rem;
+            --border-thick: 8px;
+            --dot-color: #cbd5e1;
+            --placeholder-bg: #f1f5f9;
+        }
+
+        body.dark-mode {
+            --bg-color: #0f172a;
+            --border-main: #ffffff;
+            --text-main: #f8fafc;
+            --card-bg: #1e293b;
+            --dot-color: #334155;
+            --placeholder-bg: #0f172a;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+
+        body {
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            font-size: var(--base-font);
+            line-height: 1.4;
+        }
+
+        .presentation-container { width: 100vw; height: 100vh; position: relative; }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2% 6%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+            background-image: radial-gradient(var(--dot-color) 2px, transparent 2px);
+            background-size: 60px 60px;
+        }
+
+        .slide.active { opacity: 1; visibility: visible; z-index: 10; }
+
+        .slide.active .header-box { animation: slideUp 0.4s ease forwards; }
+        .slide.active .team-grid-massive { animation: slideUp 0.5s 0.1s ease both; }
+        .slide.active .stat-grid { animation: slideUp 0.5s 0.1s ease both; }
+        .slide.active .prize-card { animation: slideUp 0.5s 0.15s ease both; }
+        .slide.active .partner-grid { animation: slideUp 0.5s 0.1s ease both; }
+        .slide.active .farewell-sub { animation: slideUp 0.5s 0.2s ease both; }
+        .slide.active .year-grid { animation: slideUp 0.5s 0.2s ease both; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.85); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .header-box {
+            position: relative;
+            margin-bottom: 3vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .bg-outline-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 11rem;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(15, 23, 42, 0.08);
+            z-index: -1;
+            text-transform: uppercase;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        body.dark-mode .bg-outline-text { -webkit-text-stroke: 2px rgba(255, 255, 255, 0.05); }
+
+        h1 {
+            font-size: var(--heading-font);
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: -6px;
+            line-height: 1;
+            font-weight: 800;
+            color: var(--text-main);
+            text-shadow: 10px 10px 0px var(--hud-teal);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ─── TEAM GRID (same as opening) ─── */
+        .team-grid-massive {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1650px;
+        }
+        .team-card {
+            background: var(--card-bg); border: 5px solid var(--border-main);
+            display: flex; flex-direction: column; overflow: hidden;
+            transition: transform 0.2s ease; position: relative;
+            height: 220px;
+        }
+        .team-card:nth-child(odd) { box-shadow: 8px 8px 0 var(--hud-teal); }
+        .team-card:nth-child(even) { box-shadow: 8px 8px 0 var(--hud-purple); }
+        .team-card:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0 var(--border-main); }
+        .photo-wrap { width: 100%; height: 155px; border-bottom: 5px solid var(--border-main); overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .shy-box { font-weight: 900; font-size: 1rem; color: var(--text-main); text-transform: uppercase; background-color: var(--placeholder-bg); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2; }
+        .name-tag { padding: 6px 10px; background: var(--card-bg); display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .name-v3 { font-weight: 900; font-size: 0.85rem; color: var(--text-main); text-transform: uppercase; margin: 0; }
+        .role-v3 { font-size: 0.55rem; font-weight: 800; background: var(--border-main); color: var(--bg-color); padding: 2px 5px; text-transform: uppercase; margin-top: 2px; }
+
+        /* ─── STATS ─── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 10px;
+        }
+        .stat-box {
+            border: 6px solid var(--border-main);
+            padding: 24px 30px;
+            background: var(--card-bg);
+            box-shadow: 8px 8px 0 var(--hud-teal);
+        }
+        .stat-box .num {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--hud-teal);
+        }
+        .stat-box .label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* ─── YEAR BREAKDOWN ─── */
+        .year-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .year-box {
+            border: 6px solid var(--border-main);
+            padding: 24px 16px;
+            background: var(--card-bg);
+            text-align: center;
+        }
+        .year-box:nth-child(1) { box-shadow: 8px 8px 0 var(--hud-teal); }
+        .year-box:nth-child(2) { box-shadow: 8px 8px 0 var(--hud-purple); }
+        .year-box:nth-child(3) { box-shadow: 8px 8px 0 var(--hud-gold); }
+        .year-box:nth-child(4) { box-shadow: 8px 8px 0 #34d399; }
+        .year-box .pct { font-size: 3.5rem; font-weight: 800; line-height: 1; }
+        .year-box:nth-child(1) .pct { color: var(--hud-teal); }
+        .year-box:nth-child(2) .pct { color: var(--hud-purple); }
+        .year-box:nth-child(3) .pct { color: var(--hud-gold); }
+        .year-box:nth-child(4) .pct { color: #34d399; }
+        .year-box .yr { font-size: 1rem; font-weight: 700; text-transform: uppercase; opacity: 0.65; margin-top: 6px; }
+
+        /* ─── PRIZE CARD ─── */
+        .prize-card {
+            border: 8px solid var(--border-main);
+            padding: 40px 50px;
+            margin-top: 20px;
+            background: var(--card-bg);
+            position: relative;
+            max-width: 1200px;
+        }
+        .prize-card.gold   { box-shadow: 20px 20px 0 var(--hud-gold); }
+        .prize-card.silver { box-shadow: 20px 20px 0 var(--hud-silver); }
+        .prize-card.bronze { box-shadow: 20px 20px 0 var(--hud-bronze); }
+        .prize-card.ctf    { box-shadow: 20px 20px 0 var(--hud-teal); }
+        .prize-card.ctf2   { box-shadow: 20px 20px 0 var(--hud-purple); }
+
+        .prize-badge {
+            background: var(--border-main); color: var(--bg-color);
+            padding: 5px 20px; font-weight: 800; font-size: 1rem;
+            position: absolute; top: -22px; left: 40px;
+            border: 4px solid var(--border-main); text-transform: uppercase;
+        }
+        .prize-medal { font-size: 5rem; line-height: 1; margin-bottom: 10px; }
+        .prize-team {
+            font-size: 4rem; font-weight: 900; line-height: 1;
+            letter-spacing: -3px; text-transform: uppercase;
+        }
+        .prize-card.gold .prize-team   { color: var(--hud-gold); }
+        .prize-card.silver .prize-team { color: var(--hud-silver); }
+        .prize-card.bronze .prize-team { color: var(--hud-bronze); }
+        .prize-card.ctf .prize-team    { color: var(--hud-teal); }
+        .prize-card.ctf2 .prize-team   { color: var(--hud-purple); }
+        .prize-desc { font-size: 1.4rem; opacity: 0.65; margin-top: 10px; font-weight: 700; }
+
+        /* ─── PARTNER GRID ─── */
+        .partner-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 15px;
+            max-width: 1200px;
+        }
+        .partner-box {
+            border: 6px solid var(--border-main);
+            padding: 30px 20px;
+            background: var(--card-bg);
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .partner-box:nth-child(odd)  { box-shadow: 8px 8px 0 var(--hud-teal); }
+        .partner-box:nth-child(even) { box-shadow: 8px 8px 0 var(--hud-purple); }
+
+        /* ─── FAREWELL ─── */
+        .farewell-sub {
+            font-size: 2rem;
+            opacity: 0.65;
+            margin-top: 20px;
+            max-width: 75%;
+            font-weight: 700;
+        }
+        .farewell-year {
+            position: absolute;
+            bottom: 6%; right: 6%;
+            font-size: 1rem; font-weight: 700;
+            letter-spacing: 4px; opacity: 0.25; text-transform: uppercase;
+        }
+        .accent-stripe {
+            height: 10px;
+            background: linear-gradient(90deg, var(--hud-teal), var(--hud-purple), var(--hud-gold));
+            margin: 16px 0;
+            max-width: 1200px;
+        }
+
+        /* ─── CONTROLS ─── */
+        .theme-toggle {
+            position: fixed; bottom: 20px; left: 20px; z-index: 200;
+            background: var(--border-main); color: var(--bg-color);
+            padding: 6px 12px; border: 3px solid var(--border-main);
+            font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem;
+            cursor: pointer; text-transform: uppercase; box-shadow: 4px 4px 0 var(--hud-teal);
+        }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 12px; background: #f1f5f9; z-index: 100; }
+        body.dark-mode .progress-container { background: #1e293b; }
+        #progress-bar { height: 100%; background: var(--hud-teal); width: 0%; transition: width 0.3s ease; }
+        .slide-counter { position: fixed; top: 20px; right: 24px; font-size: 0.9rem; font-weight: 700; color: var(--dot-color); z-index: 100; }
+        .hint { position: fixed; bottom: 20px; right: 20px; font-size: 0.85rem; color: var(--dot-color); z-index: 100; font-weight: 700; }
+
+        /* ─── MARQUEE BG ─── */
+        .marquee-bg { position: absolute; top: 0; width: 100%; opacity: 0.05; font-size: 8rem; font-weight: 800; transform: rotate(-3deg); pointer-events: none; }
+
+        /* ─── CONFETTI ─── */
+        #confetti-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; display: none;
+        }
+
+        /* ─── THANK YOU TEAM LIST ─── */
+        .thank-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            max-width: 1200px;
+        }
+        .thank-item {
+            border-left: 8px solid var(--hud-teal);
+            padding: 12px 20px;
+            background: var(--card-bg);
+            border: 6px solid var(--border-main);
+            display: flex; align-items: center; gap: 16px;
+        }
+        .thank-item:nth-child(even) { border-left-color: var(--hud-purple); box-shadow: 6px 6px 0 var(--hud-purple); }
+        .thank-item:nth-child(odd)  { border-left-color: var(--hud-teal);   box-shadow: 6px 6px 0 var(--hud-teal); }
+        .thank-name { font-weight: 900; font-size: 1.6rem; text-transform: uppercase; }
+        .thank-role { font-size: 0.9rem; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
+
+        /* ─── CTF DUAL LAYOUT ─── */
+        .ctf-dual {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 1400px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+    <div class="progress-container"><div id="progress-bar"></div></div>
+    <div class="slide-counter" id="slide-counter">1 / 14</div>
+    <button class="theme-toggle" id="theme-btn">Theme: Light</button>
+    <div class="hint">← → to navigate • F for Fullscreen</div>
+
+    <div class="presentation-container">
+
+        <!-- SLIDE 1: CLOSING CEREMONY SPLASH -->
+        <div class="slide active" style="justify-content: center; align-items: center; padding: 0; overflow: hidden;">
+            <div class="marquee-bg">
+                <marquee scrollamount="20">BREAK THE LOOP // HUDHACK 2026 //</marquee>
+                <marquee scrollamount="15" direction="right" style="color: var(--hud-teal);">CYBER SECURITY SOCIETY // THAT'S A WRAP //</marquee>
+            </div>
+            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 30px; text-align: center;">
+                <div style="background: var(--hud-teal); border: 6px solid var(--border-main); padding: 10px 30px; font-weight: 800; font-size: 1.8rem; box-shadow: 10px 10px 0 var(--border-main); text-transform: uppercase; color: #0f172a;">
+                    University of Huddersfield Cyber Security Society
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <h1 style="font-size: 7rem; color: transparent; -webkit-text-stroke: 4px var(--border-main); margin-bottom: -20px; position: relative; z-index: 2; text-shadow: none; letter-spacing: -4px;">THAT'S A WRAP —</h1>
+                    <h1 style="font-size: 15rem; text-shadow: 15px 15px 0px var(--hud-teal); position: relative; z-index: 1; letter-spacing: -8px;">HUDHACK</h1>
+                    <h1 style="font-size: 8rem; text-shadow: 10px 10px 0px var(--hud-purple); position: relative; z-index: 1; letter-spacing: -4px; color: var(--hud-gold);">2026</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: BY THE NUMBERS -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">NUMBERS</div>
+                <h1>BY THE<br>NUMBERS</h1>
+            </div>
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div class="num">61</div>
+                    <div class="label">Attendees Registered</div>
+                </div>
+                <div class="stat-box" style="box-shadow: 8px 8px 0 var(--hud-purple);">
+                    <div class="num" style="color: var(--hud-purple);">10+</div>
+                    <div class="label">Projects Built</div>
+                </div>
+                <div class="stat-box" style="box-shadow: 8px 8px 0 var(--hud-gold);">
+                    <div class="num" style="color: var(--hud-gold);">1</div>
+                    <div class="label">Epic Hackathon</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: WHO SHOWED UP -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">PEOPLE</div>
+                <h1>WHO SHOWED UP</h1>
+            </div>
+            <div style="margin-top: 8px; font-size: 1.5rem; opacity: 0.7; font-weight: 700;">From across every year of study — you all showed up and delivered. 🎉</div>
+            <div class="year-grid">
+                <div class="year-box">
+                    <div class="pct">30%</div>
+                    <div class="yr">1st Year<br><span style="opacity:0.5; font-size:0.85rem;">18 students</span></div>
+                </div>
+                <div class="year-box">
+                    <div class="pct">59%</div>
+                    <div class="yr">2nd Year<br><span style="opacity:0.5; font-size:0.85rem;">36 students</span></div>
+                </div>
+                <div class="year-box">
+                    <div class="pct">10%</div>
+                    <div class="yr">Final Year<br><span style="opacity:0.5; font-size:0.85rem;">6 students</span></div>
+                </div>
+                <div class="year-box">
+                    <div class="pct">2%</div>
+                    <div class="yr">Postgrad<br><span style="opacity:0.5; font-size:0.85rem;">1 student</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: CTF 2ND PLACE -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">CTF</div>
+                <h1>CTF — 2ND PLACE</h1>
+            </div>
+            <div class="prize-card ctf2">
+                <div class="prize-badge" style="background: var(--hud-purple); color: #0f172a;">🚩 2nd Place — Capture The Flag</div>
+                <div class="prize-medal">🥈</div>
+                <div class="prize-team">Squidward Fanclub</div>
+                <div class="prize-desc">So close! Outstanding performance under pressure — incredible hacking skills.</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: CTF 1ST PLACE -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">CTF</div>
+                <h1>CTF — 1ST PLACE</h1>
+            </div>
+            <div class="prize-card ctf">
+                <div class="prize-badge" style="background: var(--hud-teal); color: #0f172a;">🚩 1st Place — Capture The Flag</div>
+                <div class="prize-medal">🥇</div>
+                <div class="prize-team">Team Square</div>
+                <div class="prize-desc">Dominated the flags from start to finish. Exceptional hacking skills! 🔐</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: HACKIEST HACK -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">HACKY</div>
+                <h1 style="text-shadow: 10px 10px 0px #ec4899;">HACKIEST HACK</h1>
+            </div>
+            <div class="prize-card" style="box-shadow: 20px 20px 0 #ec4899; margin-top: 20px; max-width: 1200px;">
+                <div class="prize-badge" style="background: #ec4899; color: #fff; border: 4px solid var(--border-main);">🩷 Special Award — Hackiest Hack</div>
+                <div class="prize-medal">🩷</div>
+                <div class="prize-team" style="color: #ec4899;">Lava Lamp Box Breathing</div>
+                <div class="prize-desc">The most creative, chaotic, and brilliantly unhinged hack of the day. We love to see it.</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: 3RD PLACE -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">PODIUM</div>
+                <h1>3RD PLACE</h1>
+            </div>
+            <div class="prize-card bronze">
+                <div class="prize-badge" style="background: var(--hud-bronze); color: #fff;">🥉 3rd Place — Overall</div>
+                <div class="prize-medal">🥉</div>
+                <div class="prize-team">Noyze Hunter</div>
+                <div class="prize-desc">An incredible project. Brilliant work from start to finish!</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: 2ND PLACE -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">PODIUM</div>
+                <h1>2ND PLACE</h1>
+            </div>
+            <div class="prize-card silver">
+                <div class="prize-badge" style="background: var(--hud-silver); color: #0f172a;">🥈 2nd Place — Overall</div>
+                <div class="prize-medal">🥈</div>
+                <div class="prize-team">BreakLoop</div>
+                <div class="prize-desc">Outstanding work — so close to the top! You should be incredibly proud.</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: 1ST PLACE (CONFETTI) -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start;">
+                <div class="bg-outline-text">WINNER</div>
+                <h1 style="text-shadow: 10px 10px 0px var(--hud-gold);">1ST PLACE</h1>
+            </div>
+            <div class="prize-card gold" id="winner-card">
+                <div class="prize-badge" style="background: var(--hud-gold); color: #0f172a;">🥇 1st Place — HUDHACK 2026 Champions</div>
+                <div class="prize-medal">🥇</div>
+                <div class="prize-team">SignBridge</div>
+                <div class="prize-desc">HUDHACK 2026 Champions. Absolutely exceptional — you broke the loop! 🚀</div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: OUR PARTNERS (combined with thank you) -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start; margin-bottom: 1.5vh;">
+                <div class="bg-outline-text">THANKS</div>
+                <h1>OUR PARTNERS</h1>
+            </div>
+            <div style="font-size: 1.3rem; font-weight: 700; line-height: 1.5; border-left: 10px solid var(--hud-teal); padding-left: 20px; color: var(--text-main); margin-bottom: 20px; max-width: 1100px; opacity: 0.8;">
+                Without your support, sponsorship and belief in the next generation of builders — <span style="color: var(--hud-purple); font-weight: 900;">HUDHACK 2026 would not have been possible. Thank you.</span>
+            </div>
+            <div class="partner-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 1300px;">
+                <div class="partner-box" style="flex-direction: column; gap: 10px; min-height: 160px;">
+                    <img src="Pink.png" alt="Hackathons UK" style="max-width: 85%; max-height: 90px; object-fit: contain;">
+                    <div style="font-size: 1rem; font-weight: 800; text-transform: uppercase;">Hackathons UK</div>
+                </div>
+                <div class="partner-box" style="flex-direction: column; gap: 10px; min-height: 160px;">
+                    <img src="university-of-Huddersfield-logo.png" alt="University of Huddersfield" style="max-width: 85%; max-height: 90px; object-fit: contain;">
+                    <div style="font-size: 1rem; font-weight: 800; text-transform: uppercase;">University of Huddersfield</div>
+                </div>
+                <div class="partner-box" style="flex-direction: column; gap: 10px; min-height: 160px;">
+                    <img src="es-neg.png" alt="Eaton Smith" style="max-width: 85%; max-height: 90px; object-fit: contain;">
+                    <div style="font-size: 1rem; font-weight: 800; text-transform: uppercase;">Eaton Smith</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: MEET THE VOLUNTEERS -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start; margin-bottom: 2vh;">
+                <div class="bg-outline-text">TEAM</div>
+                <h1>THE VOLUNTEERS</h1>
+            </div>
+            <div class="team-grid-massive">
+                <div class="team-card"><div class="photo-wrap"><img src="ibrahim.jpg" alt="Ibrahim"></div><div class="name-tag"><p class="name-v3">Ibrahim</p><span class="role-v3">Lead Organiser</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Muhammad.jpeg" alt="Muhammad"></div><div class="name-tag"><p class="name-v3">Muhammad</p><span class="role-v3">Lead Organiser</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Angelina1.jpg" alt="Angelina"></div><div class="name-tag"><p class="name-v3">Angelina</p><span class="role-v3">CTF Designer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="HA.jpg" alt="Hasan"></div><div class="name-tag"><p class="name-v3">Hasan</p><span class="role-v3">Marketing</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Rohail.jpg" alt="Rohail"></div><div class="name-tag"><p class="name-v3">Rohail</p><span class="role-v3">CTF Designer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Arnav.jpg" alt="Arnav"></div><div class="name-tag"><p class="name-v3">Arnav</p><span class="role-v3">Quizzler</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Grace.jpg" alt="Grace"></div><div class="name-tag"><p class="name-v3">Grace</p><span class="role-v3">Marketing</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="Faiz.jpg" alt="Faiz"></div><div class="name-tag"><p class="name-v3">Faiz Muhammed</p><span class="role-v3">Marketing</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><img src="olu.png" alt="Olu"></div><div class="name-tag"><p class="name-v3">Olu</p><span class="role-v3">Volunteer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><div class="shy-box">CAMERA<br>SHY</div></div><div class="name-tag"><p class="name-v3">Ibrahim Khalifa</p><span class="role-v3">CTF Designer</span></div></div>
+                <div class="team-card"><div class="photo-wrap"><div class="shy-box">CAMERA<br>SHY</div></div><div class="name-tag"><p class="name-v3">Laiba</p><span class="role-v3">Marketing + CTF Designer</span></div></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: THANK THE TEAM (text tribute) -->
+        <div class="slide">
+            <div class="header-box" style="align-items: flex-start; margin-bottom: 2vh;">
+                <div class="bg-outline-text">GRATITUDE</div>
+                <h1>THANK YOU,<br>TEAM</h1>
+            </div>
+            <div class="thank-grid">
+                <div class="thank-item">
+                    <div>
+                        <div class="thank-name">Ibrahim &amp; Muhammad</div>
+                        <div class="thank-role">Lead Organisers — you made this happen</div>
+                    </div>
+                </div>
+                <div class="thank-item">
+                    <div>
+                        <div class="thank-name">Angelina, Rohail &amp; Ibrahim K.</div>
+                        <div class="thank-role">CTF Designers — built the challenge</div>
+                    </div>
+                </div>
+                <div class="thank-item">
+                    <div>
+                        <div class="thank-name">Hasan, Grace &amp; Faiz</div>
+                        <div class="thank-role">Marketing — spread the word</div>
+                    </div>
+                </div>
+                <div class="thank-item">
+                    <div>
+                        <div class="thank-name">Arnav</div>
+                        <div class="thank-role">Quizzler — kept the energy up</div>
+                    </div>
+                </div>
+                <div class="thank-item">
+                    <div>
+                        <div class="thank-name">Laiba</div>
+                        <div class="thank-role">Marketing + CTF Designer — multi-tasker</div>
+                    </div>
+                </div>
+                <div class="thank-item">
+                    <div>
+                        <div class="thank-name">All Volunteers</div>
+                        <div class="thank-role">Every single one of you — incredible</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: DISCORD / JOIN US -->
+        <div class="slide" style="align-items: center; text-align: center;">
+            <div class="header-box" style="align-items: center; text-align: center;">
+                <div class="bg-outline-text">JOIN US</div>
+                <h1>TELL US HOW WE DID</h1>
+            </div>
+            <div style="background: var(--card-bg); border: 10px solid var(--border-main); padding: 50px 70px; box-shadow: 30px 30px 0 var(--hud-teal); max-width: 1100px;">
+                <h1 style="font-size: 6rem; line-height: 0.85; color: var(--hud-teal); text-shadow: 8px 8px 0px var(--border-main); margin-bottom: 30px;">JOIN DISCORD!</h1>
+                <ul style="padding:0; margin:0; list-style:none;">
+                    <li style="font-weight: 800; font-size: 1.8rem; margin-bottom: 15px; padding-left: 40px; position: relative; text-transform: uppercase; color: var(--text-main);">
+                        <span style="position: absolute; left: 0; color: var(--hud-teal); font-weight: 900;">&gt;&gt;</span>Drop your feedback in #general
+                    </li>
+                    <li style="font-weight: 800; font-size: 1.8rem; margin-bottom: 15px; padding-left: 40px; position: relative; text-transform: uppercase; color: var(--text-main);">
+                        <span style="position: absolute; left: 0; color: var(--hud-teal); font-weight: 900;">&gt;&gt;</span>Stay in the community
+                    </li>
+                    <li style="font-weight: 800; font-size: 1.8rem; padding-left: 40px; position: relative; text-transform: uppercase; color: var(--text-main);">
+                        <span style="position: absolute; left: 0; color: var(--hud-teal); font-weight: 900;">&gt;&gt;</span>Future events &amp; announcements
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: SEE YOU NEXT YEAR -->
+        <div class="slide" style="justify-content: center; align-items: center; padding: 0; overflow: hidden; text-align: center;">
+            <div class="marquee-bg">
+                <marquee scrollamount="20">BUILD SOMETHING GREAT // HUDHACK 2027 IS COMING //</marquee>
+                <marquee scrollamount="15" direction="right" style="color: var(--hud-teal);">BREAK THE LOOP // CYBER SECURITY SOCIETY //</marquee>
+            </div>
+            <div style="position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <h1 style="font-size: 7rem; color: transparent; -webkit-text-stroke: 4px var(--border-main); text-shadow: none; letter-spacing: -4px;">THANKS FOR BUILDING WITH US —</h1>
+                <h1 style="font-size: 14rem; text-shadow: 15px 15px 0px var(--hud-gold); letter-spacing: -8px; color: var(--text-main);">SEE YOU</h1>
+                <h1 style="font-size: 8rem; text-shadow: 10px 10px 0px var(--hud-teal); letter-spacing: -4px; color: var(--hud-purple);">NEXT YEAR 🚀</h1>
+                <div class="accent-stripe" style="width: 600px;"></div>
+                <div style="font-size: 1.8rem; font-weight: 700; opacity: 0.6; text-transform: uppercase;">HUDHACK 2027 — Coming Soon</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress-bar');
+        const themeBtn = document.getElementById('theme-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        let currentSlide = 0;
+        let confettiRunning = false;
+        const WINNER_SLIDE = 8; // 0-indexed — slide 9 (1st place)
+
+        function updateSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            progressBar.style.width = ((index + 1) / slides.length * 100) + '%';
+            slideCounter.textContent = (index + 1) + ' / ' + slides.length;
+            currentSlide = index;
+            if (index === WINNER_SLIDE) startConfetti();
+            else stopConfetti();
+        }
+
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            themeBtn.innerText = document.body.classList.contains('dark-mode') ? "THEME: DARK" : "THEME: LIGHT";
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { if (currentSlide < slides.length - 1) updateSlide(currentSlide + 1); }
+            if (e.key === 'ArrowLeft') { if (currentSlide > 0) updateSlide(currentSlide - 1); }
+            if (e.key.toLowerCase() === 'f') { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        });
+
+        // ── Confetti ──
+        let particles = [];
+        let animFrame;
+        const COLORS = ['#41c2d5', '#c084fc', '#f59e0b', '#34d399', '#f87171', '#ffffff'];
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function spawnParticle() {
+            return {
+                x: Math.random() * canvas.width, y: -10,
+                size: Math.random() * 12 + 5,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                speedY: Math.random() * 4 + 2, speedX: (Math.random() - 0.5) * 3,
+                rotation: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 6,
+                shape: Math.random() > 0.5 ? 'rect' : 'circle'
+            };
+        }
+
+        function drawParticle(p) {
+            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rotation * Math.PI / 180); ctx.fillStyle = p.color;
+            if (p.shape === 'rect') { ctx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2); }
+            else { ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2); ctx.fill(); }
+            ctx.restore();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (particles.length < 200) particles.push(spawnParticle());
+            particles = particles.filter(p => p.y < canvas.height + 20);
+            particles.forEach(p => { p.y += p.speedY; p.x += p.speedX; p.rotation += p.rotSpeed; drawParticle(p); });
+            if (confettiRunning) animFrame = requestAnimationFrame(animateConfetti);
+        }
+
+        function startConfetti() {
+            if (confettiRunning) return;
+            confettiRunning = true; canvas.style.display = 'block'; particles = [];
+            animateConfetti(); setTimeout(stopConfetti, 6000);
+        }
+
+        function stopConfetti() {
+            confettiRunning = false; cancelAnimationFrame(animFrame);
+            ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; particles = [];
+        }
+
+        updateSlide(0);
+    </script>
+</body>
+</html>
