@@ -24,19 +24,21 @@ This repository serves two purposes:
 
 If you are on the organizing committee for the next HudHack, start by exploring these folders. Each folder contains its own detailed `README.md` tutorial and all the raw assets you need.
 
-### 🌐 [/Websites-and-Sign-Up-Process](./Websites-and-Sign-Up-Process)
+🚨 **Organizing next year's event?** Start by reading our [Post-Mortem & Lessons Learned](./LESSONS_LEARNED.md) to see what we would do differently.
+
+### 🌐 [/Websites and Sign-up process](./Websites%20and%20Sign-up%20process)
 * **What's inside:** The source code for the pre-event and post-event websites, the Google Form registration blueprint, and the automated ticketing script (Google Apps Script).
 * **Key Lesson:** Read the warning about university spam filters before you send out your acceptance emails!
 
-### 📢 [/Marketing](./Marketing)
+### 📢 [/Marketing/Promotional Material](./Marketing/Promotional%20Material)
 * **What's inside:** The Canva posters, digital screen assets, and our overall strategy for getting 60+ attendees to commit.
 * **Key Lesson:** Face-to-face lecture shoutouts and massive QR codes are your best friends.
 
-### 🚩 [/CTF-and-Challenges](./CTF-and-Challenges)
+### 🚩 [/CTFD](./CTFD)
 * **What's inside:** The full export file of our 2026 CTFd board, advice on dynamic scoring, and container setups. 
 * **Key Lesson:** CTFs are incredibly popular. Prepare more challenges than you think you need, and make the first few a basic tutorial.
 
-### 🏆 [/Devpost-and-Judging](./Devpost-and-Judging)
+### 🏆 [/Judging-and-Devpost](./Judging-and-Devpost)
 * **What's inside:** The official 30-point judging rubric, Devpost branding assets, and our guide to roaming judging.
 * **Key Lesson:** Set strict platform deadlines and scale up to digital spreadsheets for score tallying if the event grows.
 
